@@ -1,0 +1,5 @@
+golic:
+  # Use the master config's built-in rules. The defaults already cover
+  # `.yaml`, `.yml`, and `.tpl` (Helm template) files, which is everything
+  # the chart needs license headers on. No local overrides.
+  rules: {}

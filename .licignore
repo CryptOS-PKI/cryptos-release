@@ -1,0 +1,16 @@
+# Deny everything by default, then allow chart sources that need headers.
+*
+
+# Allow chart YAML and Helm template sources.
+!*.yaml
+!*.yml
+!*.tpl
+
+# Allow directory traversal.
+!*/
+
+# Re-deny generated or vendored sub-charts.
+charts/*/charts/
+
+# Re-deny repo-level config that isn't really source.
+.golic.yaml
