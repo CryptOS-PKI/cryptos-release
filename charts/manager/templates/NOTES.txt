@@ -1,0 +1,21 @@
+Thanks for installing {{ .Chart.Name }} ({{ .Chart.Version }}, app {{ .Chart.AppVersion }}).
+
+The Fleet Manager is reachable in-cluster at:
+
+  https://{{ include "manager.fullname" . }}.{{ .Release.Namespace }}.svc:{{ .Values.service.port }}
+
+Next steps:
+
+1. Make sure the TLS Secret referenced by `fm.tlsSecretName` exists in
+   namespace `{{ .Release.Namespace }}` and contains `tls.crt` + `tls.key`.
+   The chart never creates this secret for you.
+
+2. Make sure the Postgres DSN Secret referenced by
+   `postgres.dsnSecretName` exists and has the key
+   `{{ .Values.postgres.dsnSecretKey }}`.
+
+3. If you need external exposure, set `ingress.enabled=true` and configure
+   `ingress.hosts` / `ingress.tls`.
+
+4. Watch the rollout:
+     kubectl --namespace {{ .Release.Namespace }} rollout status deploy/{{ include "manager.fullname" . }}

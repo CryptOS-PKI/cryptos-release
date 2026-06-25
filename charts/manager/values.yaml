@@ -1,0 +1,141 @@
+# Apache License 2.0
+#
+# Copyright 2026 Shane
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# Default values for the manager chart.
+# Override anything below by passing `--values my-values.yaml` to `helm install`.
+
+# Number of Fleet Manager replicas. The backend is stateless; persistence
+# lives in Postgres, so this can be scaled horizontally.
+replicaCount: 1
+
+image:
+  # OCI image for the Fleet Manager backend. The image embeds the compiled
+  # web frontend and is served from the manager binary.
+  repository: ghcr.io/cryptos-pki/manager
+  # Tag override. When empty, the chart falls back to .Chart.AppVersion so
+  # chart and image stay in lockstep by default.
+  tag: ""
+  pullPolicy: IfNotPresent
+
+# Image pull secrets used when the registry above is private.
+imagePullSecrets: []
+
+# Optional name override for the rendered resources.
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Create a dedicated ServiceAccount for the Fleet Manager pod.
+  create: true
+  # Optional name override. When empty, the chart derives the name from
+  # the release.
+  name: ""
+  # Annotations attached to the ServiceAccount (e.g. cloud workload identity).
+  annotations: {}
+
+# Pod-level security context. The Fleet Manager runs as an unprivileged user.
+podSecurityContext:
+  runAsNonRoot: true
+  fsGroup: 65532
+
+# Container-level security context. The rootfs is read-only; the manager
+# only needs to read the mounted TLS secret and emit logs to stdout.
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 65532
+  capabilities:
+    drop:
+      - ALL
+
+service:
+  type: ClusterIP
+  # External (in-cluster) port. The Fleet Manager terminates TLS on
+  # targetPort using the secret named under `fm.tlsSecretName`.
+  port: 443
+  targetPort: 8443
+
+ingress:
+  # When true, expose the Fleet Manager through an Ingress. Disabled by
+  # default so operators consciously choose how to expose the UI.
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: fm.example.org
+      paths:
+        - path: /
+          pathType: Prefix
+  # TLS configuration for the Ingress. Leave empty to skip; otherwise list
+  # one or more entries with a secretName and the matching hosts.
+  tls: []
+
+resources:
+  limits:
+    cpu: 1
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+# HTTP liveness probe. /healthz is expected to return 200 once the Fleet
+# Manager has finished its own startup checks.
+livenessProbe:
+  httpGet:
+    path: /healthz
+    port: https
+    scheme: HTTPS
+  initialDelaySeconds: 15
+  periodSeconds: 20
+  timeoutSeconds: 3
+  failureThreshold: 3
+
+# HTTP readiness probe.
+readinessProbe:
+  httpGet:
+    path: /healthz
+    port: https
+    scheme: HTTPS
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 3
+  failureThreshold: 3
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# Extra environment variables passed verbatim to the manager container.
+# Each entry is a standard core/v1 EnvVar.
+extraEnv: []
+
+# Fleet Manager configuration.
+fm:
+  # Name of a pre-existing Kubernetes Secret of type kubernetes.io/tls
+  # holding the TLS keypair the Fleet Manager terminates on. Must contain
+  # tls.crt and tls.key. The chart will not create this secret for you.
+  tlsSecretName: ""
+  # Where the chart mounts the TLS secret inside the container.
+  tlsMountPath: /etc/cryptos/fm/tls
+
+# Postgres connection. The Fleet Manager stores its inventory in Postgres;
+# the connection string is read from an existing Secret to keep DSNs out of
+# values files.
+postgres:
+  # Name of a pre-existing Secret containing the DSN.
+  dsnSecretName: ""
+  # Key inside the Secret that holds the DSN value.
+  dsnSecretKey: dsn
