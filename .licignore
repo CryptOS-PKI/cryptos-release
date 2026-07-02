@@ -1,16 +1,16 @@
-# Deny everything by default, then allow chart sources that need headers.
+# Deny everything by default, then re-allow only chart sources that need
+# headers. Scoping the allow-list to charts/ (rather than *.yaml everywhere)
+# keeps the shared .github governance files — which carry their own comment
+# headers, not golic license blocks — out of the check.
 *
 
-# Allow chart YAML and Helm template sources.
-!*.yaml
-!*.yml
-!*.tpl
-
-# Allow directory traversal.
+# Allow directory traversal so the globs below can match.
 !*/
 
-# Re-deny generated or vendored sub-charts.
-charts/*/charts/
+# Chart YAML + Helm template sources.
+!charts/**/*.yaml
+!charts/**/*.yml
+!charts/**/*.tpl
 
-# Re-deny repo-level config that isn't really source.
-.golic.yaml
+# Never generated or vendored sub-charts.
+charts/*/charts/

@@ -16,3 +16,6 @@ charts/*/Chart.lock
 # Local overrides
 values.local.yaml
 values.local.yml
+
+# Local design notes (non-tracked).
+plan/
