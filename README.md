@@ -1,12 +1,12 @@
-# :anchor: helm
+# helm ⚓
 
-Helm charts for deploying the [CryptOS-PKI](https://github.com/CryptOS-PKI) control plane on Kubernetes.
+> ☸️ Helm charts for deploying the [CryptOS-PKI](https://github.com/CryptOS-PKI) control plane on Kubernetes.
 
 This repo currently ships a single chart that deploys the **Fleet Manager**: the [`manager`](https://github.com/CryptOS-PKI/manager) Go backend that talks to CryptOS CA nodes over mTLS gRPC and serves the static [`web`](https://github.com/CryptOS-PKI/web) frontend.
 
-> :rotating_light: **Status: pre-alpha.** The chart compiles, lints clean, and renders sensible Kubernetes objects, but a production-ready `manager` container image is not yet published to the default registry. Treat this chart as a deployment template you can iterate against, not a turnkey install.
+> 🚨 **Status: pre-alpha.** The chart compiles, lints clean, and renders sensible Kubernetes objects, but a production-ready `manager` container image is not yet published to the default registry. Treat this chart as a deployment template you can iterate against, not a turnkey install.
 
-## :package: What's in this repo
+## 📦 What's in this repo
 
 ```
 charts/
@@ -28,14 +28,14 @@ Taskfile.yml              # lint / package / ci targets
 .licignore                # which files golic should touch
 ```
 
-## :gear: Prerequisites
+## ⚙️ Prerequisites
 
 - Helm 3.12+.
 - A Kubernetes cluster running 1.27 or newer (the chart's `kubeVersion` constraint enforces this).
 - A Kubernetes Secret of type `kubernetes.io/tls` holding the TLS cert and key the Fleet Manager will terminate on. The chart never creates this for you, by design - the cert path is on you.
 - A Postgres database reachable from the cluster, and a Kubernetes Secret containing its DSN under the key `dsn` (or whatever you set `postgres.dsnSecretKey` to).
 
-## :rocket: Quickstart
+## 🚀 Quickstart
 
 Create the supporting secrets in your target namespace, then install:
 
@@ -62,7 +62,7 @@ helm template fm ./charts/manager \
   --set postgres.dsnSecretName=fm-postgres
 ```
 
-## :wrench: Values overview
+## 🔧 Values overview
 
 The full schema lives in [`charts/manager/values.yaml`](charts/manager/values.yaml). Highlights:
 
@@ -78,7 +78,7 @@ The full schema lives in [`charts/manager/values.yaml`](charts/manager/values.ya
 | `fm.tlsSecretName` | `""` | Required at runtime. Pre-create the Secret yourself. |
 | `postgres.dsnSecretName` | `""` | Required at runtime. DSN read via `secretKeyRef`. |
 
-## :hammer_and_wrench: Local development
+## 🛠️ Local development
 
 [`go-task`](https://taskfile.dev) wraps the common workflows:
 
@@ -89,13 +89,13 @@ task license     # re-inject Apache 2.0 headers via golic
 task ci          # currently equivalent to `task lint`
 ```
 
-## :compass: Companion repos
+## 🧭 Companion repos
 
-- :brain: [`cryptos`](https://github.com/CryptOS-PKI/cryptos) - the OS and CA engine (UKI; runs on bare metal or in a VM).
-- :satellite: [`manager`](https://github.com/CryptOS-PKI/manager) - Fleet Manager backend (the workload this chart deploys).
-- :art: [`web`](https://github.com/CryptOS-PKI/web) - Fleet Manager web frontend (compiled into the `manager` image).
-- :antenna: [`api`](https://github.com/CryptOS-PKI/api) - shared `.proto` definitions and generated gRPC stubs.
+- 🧠 [`cryptos`](https://github.com/CryptOS-PKI/cryptos) - the OS and CA engine (UKI; runs on bare metal or in a VM).
+- 🛰️ [`manager`](https://github.com/CryptOS-PKI/manager) - Fleet Manager backend (the workload this chart deploys).
+- 🎨 [`web`](https://github.com/CryptOS-PKI/web) - Fleet Manager web frontend (compiled into the `manager` image).
+- 📡 [`api`](https://github.com/CryptOS-PKI/api) - shared `.proto` definitions and generated gRPC stubs.
 
-## :page_facing_up: License
+## 📄 License
 
 [Apache License 2.0](LICENSE). Copyright 2026 Shane.
