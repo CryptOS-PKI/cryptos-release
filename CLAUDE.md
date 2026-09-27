@@ -44,6 +44,35 @@ the governance below is shared across all repos created that way.
 - Cross-repo reconciliation goes through a neutral drop-zone outside both repos — never a repo
   inside a repo, and no accidental gitlinks/submodules.
 
+## CI and Actions minutes
+
+GitHub bills every job for at least one full minute, so the workflows are shaped to spend few
+minutes per PR:
+
+- **Drafts run nothing.** PR workflows skip draft PRs and start on `ready_for_review`, `opened`,
+  `synchronize` and `reopened`. Open a PR as a draft, run the checks locally (`task ci` and the
+  hooks), push once they pass, and mark it ready when the work is finished. That starts one CI
+  run. After it is ready, push only real fixes, batched into one push.
+- **One job for the small checks.** PR Title, PR Body, PR Hygiene and the gitleaks secret scan
+  are steps of one `✅ PR Checks` job (`job-pr-checks.yaml`). Every step runs even when an earlier
+  one fails, so the log shows every failure. There is no separate Gitleaks workflow any more (it
+  also ran on every push to every branch, so each PR commit was scanned twice).
+- **Pull requests only.** Actionlint and the licence-header check (GoLic) run on pull requests, not
+  on push to `main`: the squash merge lands the tree the PR run already checked. Only Label Sync
+  (when `.github/labels.yml` changes) runs on `main`.
+- **Edits.** PR Checks and the Label Checker rerun on a title or body edit. The other PR
+  workflows run on an `edited` event only when the PR's base changed (a stacked PR retargeted onto
+  `main`); a skipped job is not billed.
+- **No no-op jobs.** There is no dependency licence check here: the repo has neither a root
+  `go.mod` nor a `package.json`, so the old two-job check did nothing on every run.
+- **Every job has a `timeout-minutes`**, so a hung job stops long before GitHub's 360-minute
+  default.
+- **Prebuilt tools.** Actionlint installs its pinned release binary, checked against the published
+  SHA-256, instead of compiling `actionlint@latest` on every run.
+- **Fork PRs.** Every PR workflow uses `pull_request`, never `pull_request_target`, so a PR from a
+  fork runs the same checks with a read-only token and no secrets. The Label Checker cannot label
+  a fork PR itself; a maintainer adds the label, and that reruns the check.
+
 ## Workflow
 
 Issue (from a template; free-form issues are disabled) -> for sequential / multi-step work, a parent
