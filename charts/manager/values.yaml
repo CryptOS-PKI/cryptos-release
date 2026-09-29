@@ -131,6 +131,29 @@ fm:
   # Where the chart mounts the TLS secret inside the container.
   tlsMountPath: /etc/cryptos/fm/tls
 
+# Bring-your-own operator CA (object name in the release namespace).
+operatorCA:
+  # ConfigMap holding operator-ca.pem, the trust anchor for operator client
+  # certificates. Mounted into the pod when set. Required when mcp.enabled is
+  # true.
+  configMap: ""
+
+# Inventory name of the fleet node that acts as the operator CA. Operator
+# credential issuance and revocation route to it, and the manager enforces
+# operator-certificate revocation from it. Empty disables both. Required when
+# mcp.enabled is true.
+operatorCANode: ""
+
+# Model Context Protocol endpoint for AI agents, served at /mcp on the same
+# listener. The manager refuses to start with MCP enabled unless
+# operatorCANode and operatorCA.configMap are set, so the chart fails the
+# render instead.
+mcp:
+  enabled: false
+  # The manager's external https origin with no path, exactly as clients
+  # reach it, for example https://fleetos.example.org. Required when enabled.
+  publicURL: ""
+
 # Postgres connection. The Fleet Manager stores its inventory in Postgres;
 # the connection string is read from an existing Secret to keep DSNs out of
 # values files.

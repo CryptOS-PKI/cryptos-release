@@ -26,6 +26,9 @@ spec:
       {{- include "manager.selectorLabels" . | nindent 6 }}
   template:
     metadata:
+      annotations:
+        # Roll the pods when the rendered config changes; the manager reads it only at startup.
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
       labels:
         {{- include "manager.selectorLabels" . | nindent 8 }}
     spec:
@@ -75,6 +78,15 @@ spec:
               readOnly: true
             - name: tmp
               mountPath: /tmp
+            - name: config
+              mountPath: /etc/cryptos/fleet/config.yaml
+              subPath: config.yaml
+              readOnly: true
+            {{- if .Values.operatorCA.configMap }}
+            - name: operator-ca
+              mountPath: /etc/cryptos/fleet/operator-ca
+              readOnly: true
+            {{- end }}
       volumes:
         - name: tls
           secret:
@@ -86,6 +98,14 @@ spec:
             defaultMode: 0400
         - name: tmp
           emptyDir: {}
+        - name: config
+          configMap:
+            name: {{ include "manager.fullname" . }}-config
+        {{- if .Values.operatorCA.configMap }}
+        - name: operator-ca
+          configMap:
+            name: {{ .Values.operatorCA.configMap }}
+        {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

@@ -29,6 +29,11 @@ tasks:
     cmds:
       - helm lint charts/*
 
+  test:
+    desc: Render the manager chart with each values case and assert on the output
+    cmds:
+      - bash tests/manager-render.sh
+
   package:
     desc: Package the manager chart into the current directory
     cmds:
@@ -46,6 +51,7 @@ tasks:
       - golic inject -t apache2 -c "2026 Shane"
 
   ci:
-    desc: Full local validation chain (lint)
+    desc: Full local validation chain (lint, render tests)
     cmds:
       - task: lint
+      - task: test

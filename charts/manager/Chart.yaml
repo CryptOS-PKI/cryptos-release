@@ -19,7 +19,7 @@ description: |
   Helm chart for the CryptOS-PKI Fleet Manager: a Go backend that serves the
   static web frontend and talks to CryptOS-PKI CA nodes over mTLS gRPC.
 type: application
-version: 0.1.0
+version: 0.2.0
 appVersion: "0.1.0"
 kubeVersion: ">=1.27.0-0"
 home: https://github.com/CryptOS-PKI

@@ -26,3 +26,22 @@ data:
   chart-version: {{ .Chart.Version | quote }}
   app-version: {{ .Chart.AppVersion | quote }}
   release-name: {{ .Release.Name | quote }}
+  # The manager's own config file, mounted at the path the image reads.
+  config.yaml: |
+    listen: ":{{ .Values.service.targetPort }}"
+    tlsCert: "{{ .Values.fm.tlsMountPath }}/tls.crt"
+    tlsKey: "{{ .Values.fm.tlsMountPath }}/tls.key"
+    {{- if .Values.operatorCA.configMap }}
+    operatorCAPath: /etc/cryptos/fleet/operator-ca/operator-ca.pem
+    {{- end }}
+    {{- if .Values.operatorCANode }}
+    operator_ca_node: {{ .Values.operatorCANode | quote }}
+    {{- end }}
+    mcp:
+      enabled: {{ .Values.mcp.enabled }}
+      {{- if .Values.mcp.enabled }}
+      {{- /* Fail at render time on what the manager would refuse at startup. */}}
+      {{- $_ := required "mcp.enabled requires operatorCANode: the manager refuses to start MCP without an operator revocation source" .Values.operatorCANode }}
+      {{- $_ := required "mcp.enabled requires operatorCA.configMap: MCP keys are re-validated against the operator CA on every request" .Values.operatorCA.configMap }}
+      public_url: {{ required "mcp.enabled requires mcp.publicURL, the manager's external https origin (for example https://fleetos.example.org)" .Values.mcp.publicURL | quote }}
+      {{- end }}

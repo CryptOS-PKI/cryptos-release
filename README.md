@@ -12,6 +12,7 @@ This repo currently ships a single chart that deploys the **Fleet Manager**: the
 charts/
   manager/                # Fleet Manager Helm chart
     Chart.yaml
+    README.md             # chart-specific docs (MCP endpoint)
     values.yaml
     templates/
       _helpers.tpl
@@ -21,6 +22,8 @@ charts/
       service.yaml
       serviceaccount.yaml
       NOTES.txt
+tests/
+  manager-render.sh       # helm template render checks
 LICENSE                   # Apache License 2.0
 NOTICE
 Taskfile.yml              # lint / package / ci targets
@@ -77,6 +80,9 @@ The full schema lives in [`charts/manager/values.yaml`](charts/manager/values.ya
 | `podSecurityContext` / `securityContext` | non-root, read-only rootfs, dropped caps | The container only needs to read the mounted TLS secret and write to `/tmp`. |
 | `fm.tlsSecretName` | `""` | Required at runtime. Pre-create the Secret yourself. |
 | `postgres.dsnSecretName` | `""` | Required at runtime. DSN read via `secretKeyRef`. |
+| `operatorCA.configMap` | `""` | ConfigMap holding `operator-ca.pem`, the operator client-certificate trust anchor. Required when `mcp.enabled` is true. |
+| `operatorCANode` | `""` | Fleet node acting as the operator CA (issuance, revocation). Required when `mcp.enabled` is true. |
+| `mcp.enabled` / `mcp.publicURL` | `false` / `""` | MCP endpoint at `/mcp`. The manager will not start MCP without `operatorCANode`; see the [chart README](charts/manager/README.md#-mcp-endpoint). |
 
 ## 🛠️ Local development
 
@@ -84,9 +90,10 @@ The full schema lives in [`charts/manager/values.yaml`](charts/manager/values.ya
 
 ```bash
 task lint        # helm lint charts/*
+task test        # render the chart per values case and assert on the output
 task package     # helm package charts/manager (produces manager-<version>.tgz)
 task license     # re-inject Apache 2.0 headers via golic
-task ci          # currently equivalent to `task lint`
+task ci          # lint, then test
 ```
 
 ## 🧭 Companion repos
