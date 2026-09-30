@@ -7,6 +7,9 @@ This repo ships one chart, `charts/manager`, and it is **deprecated**. The suppo
 > [!WARNING]
 > 🚨 **Status: pre-alpha.** The chart compiles, lints clean, and renders sensible Kubernetes objects, but a production-ready `manager` container image is not yet published to the default registry. Treat this chart as a deployment template you can iterate against, not a turnkey install.
 
+> [!WARNING]
+> 🚧 **Pre-1.0: any release can change fundamentally.** CryptOS is pre-1.0. Until v1.0.0, any release may change configuration, APIs, on-disk and state formats, trust setup, and upgrade paths, sometimes with no migration path. If you run it in production, you accept that risk. Read [each release's upgrade notes](https://github.com/CryptOS-PKI/helm/releases) before you upgrade.
+
 ## 📥 Install the Fleet Manager
 
 Install the Fleet Manager with manager's own chart, [`chart/fleet-manager`](https://github.com/CryptOS-PKI/manager/tree/main/chart/fleet-manager). Each manager release tag publishes it to `oci://ghcr.io/cryptos-pki/charts/fleet-manager`:
