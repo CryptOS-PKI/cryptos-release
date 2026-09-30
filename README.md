@@ -4,6 +4,7 @@
 
 This repo currently ships a single chart that deploys the **Fleet Manager**: the [`manager`](https://github.com/CryptOS-PKI/manager) Go backend that talks to CryptOS CA nodes over mTLS gRPC and serves the static [`web`](https://github.com/CryptOS-PKI/web) frontend.
 
+> [!WARNING]
 > 🚨 **Status: pre-alpha.** The chart compiles, lints clean, and renders sensible Kubernetes objects, but a production-ready `manager` container image is not yet published to the default registry. Treat this chart as a deployment template you can iterate against, not a turnkey install.
 
 ## 📦 What's in this repo
