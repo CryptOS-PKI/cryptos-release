@@ -1,3 +1,11 @@
+DEPRECATED: this chart can't start the Fleet Manager. It sets FM_* environment
+variables the manager never reads and mounts no config.yaml. Install the
+supported chart instead:
+
+  helm install fleet oci://ghcr.io/cryptos-pki/charts/fleet-manager --version X.Y.Z
+
+See https://github.com/CryptOS-PKI/manager#readme for its values.
+
 Thanks for installing {{ .Chart.Name }} ({{ .Chart.Version }}, app {{ .Chart.AppVersion }}).
 
 The Fleet Manager is reachable in-cluster at:
