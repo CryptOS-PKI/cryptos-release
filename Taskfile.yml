@@ -1,6 +1,6 @@
 # Apache License 2.0
 #
-# Copyright 2026 Shane
+# Copyright The CryptOS Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -38,12 +38,12 @@ tasks:
     desc: Verify every source file carries the Apache 2.0 license header (CI; never writes).
     cmds:
       - go install github.com/Bugs5382/golic/cmd/golic@v0.2.0
-      - golic inject -t apache2 -c "2026 Shane" --dry -x
+      - golic inject -t apache2-cncf --dry -x
   license:fix:
     desc: Inject the Apache 2.0 header into any source file missing it.
     cmds:
       - go install github.com/Bugs5382/golic/cmd/golic@v0.2.0
-      - golic inject -t apache2 -c "2026 Shane"
+      - golic inject -t apache2-cncf
 
   ci:
     desc: Full local validation chain (lint)
