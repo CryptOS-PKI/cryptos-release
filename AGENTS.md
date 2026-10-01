@@ -1,4 +1,4 @@
-# AGENTS.md - helm
+# AGENTS.md - cryptos-release
 
 Guide for AI agents working in this repository. Pair with `CLAUDE.md` (the working agreement and
 hook-enforced rules). Keep this file current when the build, layout, or public API changes.
@@ -10,7 +10,7 @@ Helm chart for the CryptOS PKI Fleet Manager
 <!-- Fill in: what the project does, what it ships (library, service, action, CLI), and the one or
 two things an agent must understand before changing it. -->
 
-## Using helm
+## Using cryptos-release
 
 <!-- If this project is consumed by others (a library/plugin/action), describe the contract a
 consumer must respect: the single entry point, the public surface, required options, and anything

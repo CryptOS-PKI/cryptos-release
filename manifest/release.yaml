@@ -1,0 +1,6 @@
+# The pinned components of one CryptOS release. Filled in at release time:
+# see manifest/README.md.
+version: v0.1.0-dev
+node: {repo: CryptOS-PKI/cryptos-node, image: null}
+manager: {image: ghcr.io/cryptos-pki/cryptos-manager, digest: null}
+web: {bundled: true}

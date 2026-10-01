@@ -1,24 +1,24 @@
-# helm ⚓
+# cryptos-release ⚓
 
-> ☸️ Helm charts for deploying the [CryptOS-PKI](https://github.com/CryptOS-PKI) control plane on Kubernetes.
+> ☸️ Release packaging for [CryptOS-PKI](https://github.com/CryptOS-PKI): the pinned release manifest and the Helm chart for the control plane on Kubernetes.
 
-This repo ships one chart, `charts/manager`, and it is **deprecated**. The supported chart for the **Fleet Manager** (the [`manager`](https://github.com/CryptOS-PKI/manager) Go backend that talks to CryptOS CA nodes over mTLS gRPC and serves the static [`web`](https://github.com/CryptOS-PKI/web) frontend) is `fleet-manager`, which lives in the manager repo. See [Install the Fleet Manager](#-install-the-fleet-manager).
+This repo holds the release manifest, [`manifest/release.yaml`](manifest/release.yaml), which pins the node image, the manager image digest and the bundled web console of a release (see [`manifest/README.md`](manifest/README.md)). It also ships one chart, `charts/manager`, and that chart is **deprecated**. The supported chart for the **Fleet Manager** (the [`cryptos-manager`](https://github.com/CryptOS-PKI/cryptos-manager) Go backend that talks to CryptOS CA nodes over mTLS gRPC and serves the static [`cryptos-web`](https://github.com/CryptOS-PKI/cryptos-web) frontend) is `fleet-manager`, which lives in the cryptos-manager repo. See [Install the Fleet Manager](#-install-the-fleet-manager).
 
 > [!WARNING]
 > 🚨 **Status: pre-alpha.** The chart compiles, lints clean, and renders sensible Kubernetes objects, but a production-ready `manager` container image is not yet published to the default registry. Treat this chart as a deployment template you can iterate against, not a turnkey install.
 
 > [!WARNING]
-> 🚧 **Pre-1.0: any release can change fundamentally.** CryptOS is pre-1.0. Until v1.0.0, any release may change configuration, APIs, on-disk and state formats, trust setup, and upgrade paths, sometimes with no migration path. If you run it in production, you accept that risk. Read [each release's upgrade notes](https://github.com/CryptOS-PKI/helm/releases) before you upgrade.
+> 🚧 **Pre-1.0: any release can change fundamentally.** CryptOS is pre-1.0. Until v1.0.0, any release may change configuration, APIs, on-disk and state formats, trust setup, and upgrade paths, sometimes with no migration path. If you run it in production, you accept that risk. Read [each release's upgrade notes](https://github.com/CryptOS-PKI/cryptos-release/releases) before you upgrade.
 
 ## 📥 Install the Fleet Manager
 
-Install the Fleet Manager with manager's own chart, [`chart/fleet-manager`](https://github.com/CryptOS-PKI/manager/tree/main/chart/fleet-manager). Each manager release tag publishes it to `oci://ghcr.io/cryptos-pki/charts/fleet-manager`:
+Install the Fleet Manager with manager's own chart, [`chart/fleet-manager`](https://github.com/CryptOS-PKI/cryptos-manager/tree/main/chart/fleet-manager). Each manager release tag publishes it to `oci://ghcr.io/cryptos-pki/charts/fleet-manager`:
 
 ```bash
 helm install fleet oci://ghcr.io/cryptos-pki/charts/fleet-manager --version X.Y.Z
 ```
 
-Its values (TLS secret, operator CA, fleet nodes, MCP) are documented in the [manager README](https://github.com/CryptOS-PKI/manager#readme), not here.
+Its values (TLS secret, operator CA, fleet nodes, MCP) are documented in the [cryptos-manager README](https://github.com/CryptOS-PKI/cryptos-manager#readme), not here.
 
 > [!WARNING]
 > **`charts/manager` can't start the manager.** It passes its settings as `FM_*` environment variables, which the manager never reads, and it mounts no `config.yaml`, which is where the manager takes its configuration from. A release installed from it never comes up. Use `fleet-manager` instead. `charts/manager` stays in this repo for now and will be removed in a later change, once manager has published `fleet-manager`.
@@ -26,8 +26,11 @@ Its values (TLS secret, operator CA, fleet nodes, MCP) are documented in the [ma
 ## 📦 What's in this repo
 
 ```
+manifest/
+  release.yaml            # pinned node image, manager digest and web for a release
+  README.md               # what each key pins and when it's filled in
 charts/
-  manager/                # Fleet Manager Helm chart
+  manager/                # Fleet Manager Helm chart (deprecated)
     Chart.yaml
     values.yaml
     templates/
@@ -89,7 +92,7 @@ The full schema lives in [`charts/manager/values.yaml`](charts/manager/values.ya
 | Key | Default | Notes |
 |---|---|---|
 | `replicaCount` | `1` | Backend is stateless; scale horizontally as needed. |
-| `image.repository` | `ghcr.io/cryptos-pki/manager` | Backend image. No production tag is published yet. |
+| `image.repository` | `ghcr.io/cryptos-pki/cryptos-manager` | Backend image. No production tag is published yet. |
 | `image.tag` | `""` | Falls back to `.Chart.AppVersion` when empty. |
 | `service.type` | `ClusterIP` | Use `ingress` (below) or a `LoadBalancer` override to expose externally. |
 | `service.port` / `service.targetPort` | `443` / `8443` | The backend terminates TLS itself; both ports speak HTTPS. |
@@ -113,10 +116,9 @@ After a stacked pull request is retargeted onto `main`, CI starts on its next pu
 
 ## 🧭 Companion repos
 
-- 🧠 [`cryptos`](https://github.com/CryptOS-PKI/cryptos) - the OS and CA engine (UKI; runs on bare metal or in a VM).
-- 🛰️ [`manager`](https://github.com/CryptOS-PKI/manager) - Fleet Manager backend, and its supported Helm chart, `chart/fleet-manager`.
-- 🎨 [`web`](https://github.com/CryptOS-PKI/web) - Fleet Manager web frontend (compiled into the `manager` image).
-- 📡 [`api`](https://github.com/CryptOS-PKI/api) - shared `.proto` definitions and generated gRPC stubs.
+- 🧠 [`cryptos-node`](https://github.com/CryptOS-PKI/cryptos-node) - the OS and CA engine (UKI; runs on bare metal or in a VM), and the node API protos.
+- 🛰️ [`cryptos-manager`](https://github.com/CryptOS-PKI/cryptos-manager) - Fleet Manager backend, its fleet API protos, and its supported Helm chart, `chart/fleet-manager`.
+- 🎨 [`cryptos-web`](https://github.com/CryptOS-PKI/cryptos-web) - Fleet Manager web frontend (compiled into the manager image).
 
 ## 📄 License
 
