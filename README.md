@@ -109,6 +109,8 @@ task license     # re-inject Apache 2.0 headers via golic
 task ci          # currently equivalent to `task lint`
 ```
 
+After a stacked pull request is retargeted onto `main`, CI starts on its next push, or when it is toggled to draft and back to ready.
+
 ## 🧭 Companion repos
 
 - 🧠 [`cryptos`](https://github.com/CryptOS-PKI/cryptos) - the OS and CA engine (UKI; runs on bare metal or in a VM).
