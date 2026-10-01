@@ -61,8 +61,8 @@ minutes per PR:
   on push to `main`: the squash merge lands the tree the PR run already checked. Only Label Sync
   (when `.github/labels.yml` changes) runs on `main`.
 - **Edits.** PR Checks and the Label Checker rerun on a title or body edit. The other PR
-  workflows run on an `edited` event only when the PR's base changed (a stacked PR retargeted onto
-  `main`); a skipped job is not billed.
+  workflows ignore edits: after a stacked PR is retargeted onto `main`, CI starts on its next push
+  or when the PR is toggled to draft and back to ready.
 - **No no-op jobs.** There is no dependency licence check here: the repo has neither a root
   `go.mod` nor a `package.json`, so the old two-job check did nothing on every run.
 - **Every job has a `timeout-minutes`**, so a hung job stops long before GitHub's 360-minute
