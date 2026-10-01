@@ -21,7 +21,7 @@ replicaCount: 1
 image:
   # OCI image for the Fleet Manager backend. The image embeds the compiled
   # web frontend and is served from the manager binary.
-  repository: ghcr.io/cryptos-pki/manager
+  repository: ghcr.io/cryptos-pki/cryptos-manager
   # Tag override. When empty, the chart falls back to .Chart.AppVersion so
   # chart and image stay in lockstep by default.
   tag: ""
