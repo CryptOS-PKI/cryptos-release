@@ -120,6 +120,10 @@ After a stacked pull request is retargeted onto `main`, CI starts on its next pu
 - 🛰️ [`cryptos-manager`](https://github.com/CryptOS-PKI/cryptos-manager) - Fleet Manager backend, its fleet API protos, and its supported Helm chart, `chart/fleet-manager`.
 - 🎨 [`cryptos-web`](https://github.com/CryptOS-PKI/cryptos-web) - Fleet Manager web frontend (compiled into the manager image).
 
+## 🙏 Acknowledgements
+
+CryptOS was originally written by [@Bugs5382](https://github.com/Bugs5382).
+
 ## 📄 License
 
 [Apache License 2.0](LICENSE). Copyright The CryptOS Authors.
